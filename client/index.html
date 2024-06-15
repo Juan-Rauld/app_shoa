@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hora Oficial de Chile</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>Hora Oficial de Chile</h1>
+        <div id="hora"></div>
+    </div>
+
+    <script>
+        let offset = 0;
+
+        function actualizarReloj() {
+            const now = new Date(Date.now() + offset);
+            const horas = String(now.getHours()).padStart(2, '0');
+            const minutos = String(now.getMinutes()).padStart(2, '0');
+            const segundos = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('hora').textContent = `Hora Oficial: ${horas}:${minutos}:${segundos}`;
+        }
+
+        fetch('http://localhost:3000/hora-oficial')
+            .then(response => response.json())
+            .then(data => {
+                const horaOficial = new Date(data.horaOficial);
+                const ahora = new Date();
+                offset = horaOficial.getTime() - ahora.getTime();
+
+                actualizarReloj();
+                setInterval(actualizarReloj, 1000);
+            })
+            .catch(error => {
+                console.error('Error al obtener la hora oficial:', error);
+                document.getElementById('hora').textContent = 'Error al obtener la hora oficial.';
+            });
+    </script>
+</body>
+</html>
